@@ -3,7 +3,7 @@ import { ApplicationStatus } from 'src/enums/application-status.enum';
 import { BelongsTo, Column, DataType, ForeignKey, HasMany, Model, Table } from 'sequelize-typescript';
 import { Broker } from '../brokers/broker.entity';
 import { Exclude } from 'class-transformer';
-import { IsDate, IsEnum, IsInt, IsNumber, IsOptional } from 'class-validator';
+import { IsDate, IsEnum, IsInt, IsNumber, IsOptional, IsString } from 'class-validator';
 import { Task } from '../tasks/task.entity';
 
 /**
@@ -44,12 +44,14 @@ export class Application extends Model<Application> {
    */
   @ApiProperty({ description: "The applicant's name" })
   @Column({ type: DataType.STRING(50), field: 'applicant_name' })
+  @IsString()
   applicantName: string;
   /**
    * The applicant's email address
    */
   @ApiProperty({ description: "The applicant's email address" })
   @Column({ type: DataType.STRING(255), field: 'applicant_email' })
+  @IsString()
   applicantEmail: string;
   /**
    * The applicant's mobile phone number
@@ -60,12 +62,14 @@ export class Application extends Model<Application> {
     unique: true,
     field: 'applicant_mobile_phone_number',
   })
+  @IsString()
   applicantMobilePhoneNumber: string;
   /**
    * The applicant's address
    */
   @ApiProperty({ description: "The applicant's address" })
   @Column({ type: DataType.STRING(50), field: 'applicant_address' })
+  @IsString()
   applicantAddress: string;
   /**
    * The broker that arranged the loan
@@ -99,6 +103,7 @@ export class Application extends Model<Application> {
    */
   @ApiProperty({ description: 'The incoming property address' })
   @Column({ type: DataType.STRING(50), field: 'incoming_address' })
+  @IsString()
   incomingAddress: string;
   /**
    * The deposit paid on the incoming property in dollars
@@ -165,6 +170,7 @@ export class Application extends Model<Application> {
    */
   @ApiProperty({ description: 'The outgoing property address' })
   @Column({ type: DataType.STRING(50), field: 'outgoing_address' })
+  @IsString()
   outgoingAddress: string;
   /**
    * The remaining mortgage if any on the outgoing property in dollars

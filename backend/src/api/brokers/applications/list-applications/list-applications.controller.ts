@@ -9,24 +9,21 @@ import {
 } from '@nestjs/swagger';
 import { Application } from 'src/models/applications/application.entity';
 import {
-  ApplicationDto,
-  BrokerApplicationPostResponseDto,
   BrokerApplicationsListBadRequestResponseDto,
   BrokerApplicationsListRequestDto,
   BrokerApplicationsListResponseDto,
 } from './list-applications.dto';
 import { BrokerDto } from 'src/models/brokers/broker.dto';
 import { BrokerGuard } from '../../broker.guard';
-import { Body, Controller, Get, HttpCode, HttpException, HttpStatus, Inject, Post, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, HttpCode, HttpException, HttpStatus, Inject, Query, UseGuards } from '@nestjs/common';
 import { INTERNAL_SERVER_ERROR } from 'src/common/constants/response-messages';
 import { InternalServerErrorResponseDto } from 'src/common/responses';
+import { Op } from 'sequelize';
 import { Task } from 'src/models/tasks/task.entity';
 import { TaskStatus } from 'src/enums/task-status.enum';
 import { createDateFilter } from 'src/common/query-filters';
 import { formatResponseTable } from 'src/common/swagger';
 import User from 'src/common/decorators/user';
-import { Op } from 'sequelize';
-import { ApplicationStatus } from 'src/enums/application-status.enum';
 
 /**
  * Broker API endpoint for listing applications they have submitted with optional result filtering.
@@ -41,7 +38,7 @@ export class BrokerApplicationsListController {
   constructor(
     @Inject(APPLICATION_REPOSITORY)
     private applicationEntity: typeof Application,
-  ) { }
+  ) {}
 
   /**
    * Fetches the applications that the broker has submitted.  The applications are optionally filtered
@@ -104,7 +101,8 @@ export class BrokerApplicationsListController {
     };
     if (query.status) {
       whereOptions.status = { [Op.in]: query.status };
-      console.log(whereOptions)
+      // eslint-disable-next-line no-console
+      console.log(whereOptions);
     }
     const applications = await this.applicationEntity.findAll({
       where: whereOptions,
@@ -113,39 +111,6 @@ export class BrokerApplicationsListController {
     return {
       success: true,
       applications,
-    };
-  }
-
-  @Post('create-applications')
-  @UseGuards(BrokerGuard)
-  @ApiBearerAuth('BROKER')
-  @HttpCode(HttpStatus.OK)
-  @ApiOperation({
-    summary: 'Create applications',
-    description:
-      'Create the applications that the broker has submitted.',
-  })
-  @ApiOkResponse({
-    type: BrokerApplicationPostResponseDto,
-  })
-  @ApiInternalServerErrorResponse({
-    type: InternalServerErrorResponseDto,
-    description: `Returns \`${INTERNAL_SERVER_ERROR}\` when the result could not be computed`,
-  })
-  @ApiBadRequestResponse({
-    type: BrokerApplicationsListBadRequestResponseDto,
-    description: formatResponseTable({}),
-  })
-  async post(
-    @User() user: BrokerDto,
-    @Body() body: ApplicationDto
-  ): Promise<BrokerApplicationPostResponseDto> {
-    const avgLoanAmount = await this.applicationEntity.getAverageLoanAmount()
-    const loanAmount = body.loanAmount !== avgLoanAmount ? body.loanAmount : null;
-    // const application = await this.applicationEntity.create({ ...body, status: ApplicationStatus.Submitted, brokerId: user.id });
-    return {
-      success: true,
-      loanAmount
     };
   }
 }

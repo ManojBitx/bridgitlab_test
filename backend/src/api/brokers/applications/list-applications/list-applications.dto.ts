@@ -61,29 +61,6 @@ export class BrokerApplicationsListRequestDto {
   readonly maximumDate?: Date;
 }
 
-export class ApplicationDto extends PickType(Application, [
-  'applicantName',
-  'applicantEmail',
-  'applicantMobilePhoneNumber',
-  'applicantAddress',
-  'annualIncomeBeforeTax',
-  'incomingAddress',
-  'incomingDeposit',
-  'incomingPrice',
-  'incomingStampDuty',
-  'loanAmount',
-  'loanDuration',
-  'monthlyExpenses',
-  'outgoingAddress',
-  'outgoingMortgage',
-  'outgoingValuation',
-  'savingsContribution'
-]) { }
-
-export class BrokerApplicationPostResponseDto extends SuccessResponseDto {
-  readonly loanAmount: number
-}
-
 class BrokerApplicationDto extends PickType(Application, [
   'id',
   'applicationId',
@@ -94,7 +71,7 @@ class BrokerApplicationDto extends PickType(Application, [
   'applicantName',
   'incomingAddress',
   'outgoingAddress',
-]) { }
+]) {}
 
 /**
  * The response data
